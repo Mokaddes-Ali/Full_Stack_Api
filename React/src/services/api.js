@@ -11,6 +11,9 @@ export const logout = () => axios.post(`${API_URL}/logout`, {}, {
 export const forgotPassword = (data) => axios.post(`${API_URL}/forgot-password`, data);
 export const resetPassword = (data) => axios.post(`${API_URL}/reset-password`, data);
 
+export const passwordverify = (data) => axios.post(`${API_URL}/passwordverify-otp`, data);
+
+
 // Send OTP
 export const sendOtp = (email) => axios.post(`${API_URL}/send-otp`, { email });
 

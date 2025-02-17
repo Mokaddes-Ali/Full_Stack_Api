@@ -1,32 +1,62 @@
-import { useState } from 'react';
-import { resetPassword } from '../services/api';
+import { useState } from "react";
+import { resetPassword } from "../services/api";
+import { useNavigate } from "react-router-dom"; // ✅ useNavigate import
 
 const ResetPassword = () => {
     const [formData, setFormData] = useState({
-        token: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
+        email: "",
+        password: "",
+        password_confirmation: "",
     });
+    const [message, setMessage] = useState("");
+    const navigate = useNavigate(); // ✅ Initialize navigate
 
-    const handleSubmit = async (e) => {
+    const handleResetPassword = async (e) => {
         e.preventDefault();
         try {
             const response = await resetPassword(formData);
-            console.log(response.data);
+            setMessage(response.data.message);
+
+            // ✅ Navigate to dashboard/login after password reset
+            if (response.data.success) {
+                setTimeout(() => {
+                    navigate("/login"); // 🔥 Redirect to login/dashboard
+                }, 1000);
+            }
         } catch (error) {
-            console.error(error.response.data);
+            setMessage("Failed to reset password");
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input type="email" name="email" placeholder="Email" onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-            <input type="password" name="password" placeholder="Password" onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
-            <input type="password" name="password_confirmation" placeholder="Confirm Password" onChange={(e) => setFormData({ ...formData, password_confirmation: e.target.value })} />
-            <input type="hidden" name="token" value={formData.token} />
-            <button type="submit">Reset Password</button>
-        </form>
+        <div>
+            <h2>Reset Password</h2>
+            <form onSubmit={handleResetPassword}>
+                <input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    required
+                />
+                <input
+                    type="password"
+                    placeholder="New Password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    required
+                />
+                <input
+                    type="password"
+                    placeholder="Confirm Password"
+                    value={formData.password_confirmation}
+                    onChange={(e) => setFormData({ ...formData, password_confirmation: e.target.value })}
+                    required
+                />
+                <button type="submit">Reset Password</button>
+            </form>
+            {message && <p>{message}</p>}
+        </div>
     );
 };
 

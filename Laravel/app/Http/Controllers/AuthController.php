@@ -1,6 +1,5 @@
 <?php
 
-// app/Http/Controllers/AuthController.php
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -65,81 +64,82 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        $status = Password::sendResetLink($request->only('email'));
+        $user = User::where('email', $request->email)->first();
 
-        return $status === Password::RESET_LINK_SENT
-            ? response()->json(['message' => 'Reset link sent to your email'], 200)
-            : response()->json(['message' => 'Unable to send reset link'], 400);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $otp = rand(100000, 999999);
+        $user->otp = $otp;
+        $user->otp_expiry = Carbon::now()->addMinutes(3);
+        $user->save();
+
+        Mail::to($user->email)->send(new OtpMail($otp));
+
+        return response()->json(['message' => 'OTP sent to your email'], 200);
     }
+
 
     // Reset Password
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|string|confirmed',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                ])->setRememberToken(Str::random(60));
+        $user = User::where('email', $request->email)->first();
 
-                $user->save();
-                event(new PasswordReset($user));
-            }
-        );
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
 
-        return $status === Password::PASSWORD_RESET
-            ? response()->json(['message' => 'Password reset successfully'], 200)
-            : response()->json(['message' => 'Unable to reset password'], 400);
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json(['message' => 'Password reset successfully'], 200);
     }
+
 
 
 
      // Send OTP
      public function sendOtp(Request $request)
      {
-         // Find user by email
          $user = User::where('email', $request->email)->first();
          if (!$user) {
              return response()->json(['message' => 'User not found'], 404);
          }
 
          // Generate a strong 6-digit OTP
-         $otp = rand(100000, 999999);  // 6-digit OTP
+         $otp = rand(100000, 999999);
          $expiry_time = Carbon::now()->addMinutes(3);
 
-         // Save OTP and expiry time to database
          $user->otp = $otp;
          $user->otp_expiry = $expiry_time;
          $user->save();
 
-         // Send OTP via email (custom email class should handle it)
          Mail::to($user->email)->send(new OtpMail($otp));
 
          return response()->json(['message' => 'OTP sent'], 200);
      }
 
-     // Verify OTP
+
      public function verifyOtp(Request $request)
      {
-         // Find user by OTP
+
          $user = User::where('otp', $request->otp)->first();
 
          if (!$user) {
              return response()->json(['message' => 'Invalid OTP'], 400);
          }
 
-         // Check if OTP is expired
          if (Carbon::now()->gt($user->otp_expiry)) {
              return response()->json(['message' => 'OTP has expired'], 400);
          }
 
-         // OTP is valid, mark it as verified and update the user's email_verified_at timestamp
+
          $user->otp = null;
          $user->otp_expiry = null;
          $user->email_verified_at = Carbon::now();
