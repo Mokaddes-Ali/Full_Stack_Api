@@ -1,105 +1,98 @@
-// import { useState } from 'react';
-// import { forgotPassword } from '../services/api';
-
-// const ForgotPassword = () => {
-//     const [email, setEmail] = useState('');
-//     const [loading, setLoading] = useState(false);
-//     const [error, setError] = useState('');
-
-//     const handleSubmit = async (e) => {
-//         e.preventDefault();
-//         setLoading(true);
-//         setError('');
-//         try {
-//             const response = await forgotPassword({ email });
-//             console.log(response.data);
-//             // Handle success (e.g., show a success message)
-//         } catch (error) {
-//             setError(error.response?.data || 'An error occurred');
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
-
-//     return (
-//         <div className="min-h-screen flex justify-center items-center bg-gray-50">
-//             <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-lg">
-//                 <h2 className="text-2xl font-semibold text-center mb-6">Forgot Password</h2>
-//                 <form onSubmit={handleSubmit} className="space-y-4">
-//                     <div>
-//                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
-//                         <input
-//                             type="email"
-//                             name="email"
-//                             id="email"
-//                             placeholder="Enter your email"
-//                             onChange={(e) => setEmail(e.target.value)}
-//                             value={email}
-//                             className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-//                             required
-//                         />
-//                     </div>
-//                     {error && <p className="text-sm text-red-600">{error}</p>}
-//                     <div className="flex justify-between items-center">
-//                         <button
-//                             type="submit"
-//                             className={`w-full py-2 mt-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:outline-none ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-//                             disabled={loading}
-//                         >
-//                             {loading ? 'Sending...' : 'Send Reset Link'}
-//                         </button>
-//                     </div>
-//                 </form>
-//                 <p className="mt-4 text-center text-sm text-gray-600">
-//                     Remembered your password?{' '}
-//                     <a href="/login" className="text-blue-500 hover:text-blue-700">Login</a>
-//                 </p>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default ForgotPassword;
-
-
 import { useState } from "react";
 import { sendOtp } from "../services/api";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ForgotPassword = () => {
-    const [email, setEmail] = useState("");
-    const [message, setMessage] = useState("");
-    const navigate = useNavigate(); // Initialize navigate
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); 
+  const navigate = useNavigate();
 
-    const handleForgotPassword = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await sendOtp({ email });
-            setMessage(response.data.message);
-            // Navigate to VerifyOtp page with email as state
-            navigate("/verify-otp", { state: { email } });
-        } catch (error) {
-            setMessage("Something went wrong!");
-        }
-    };
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setLoading(true); 
+    try {
+      const response = await sendOtp({ email });
+        toast.success("OTP sent successfully! We have sent an OTP to email.");
+    
+      navigate("/verify-otp", { state: { email } });
+    } catch (error) {
+        toast.error(error.response?.data?.message || "Something went wrong! Please try again.");
+      setMessage("Something went wrong! Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <div>
-            <h2>Forgot Password</h2>
-            <form onSubmit={handleForgotPassword}>
-                <input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-                <button type="submit">Send OTP</button>
-            </form>
-            {message && <p>{message}</p>}
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-base-200">
+      <div className="card w-full max-w-sm shadow-xl bg-base-100">
+        <div className="card-body">
+          <h2 className="card-title text-center">Forgot Password</h2>
+          <form onSubmit={handleForgotPassword}>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Enter your email</span>
+              </label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="input input-bordered"
+              />
+            </div>
+            <div className="form-control mt-4">
+  <button
+    type="submit"
+    className={`btn text-white ${loading ? "bg-white" : "bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800"} focus:ring-4 focus:ring-blue-300 flex items-center justify-center`}
+    disabled={loading}
+  >
+    {loading ? (
+      <>
+        {/* Spinner Icon */}
+        <svg
+          className="w-5 h-5 mr-2 animate-spin"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 4v4m0 0l-2-2m2 2l2-2m0 0h4m-4 0l-2 2m2-2V4"
+          />
+        </svg>
+        Sending OTP...
+      </>
+    ) : (
+      "Send OTP"
+    )}
+  </button>
+</div>
+
+
+          </form>
+          {message && <p className="text-center text-sm text-error mt-2">{message}</p>}
+
+  
+          <div className="text-center mt-4">
+            <p>
+              Remember your password?{" "}
+              <Link to="/login" className="text-primary font-semibold">
+                Login here
+              </Link>
+            </p>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default ForgotPassword;
-
