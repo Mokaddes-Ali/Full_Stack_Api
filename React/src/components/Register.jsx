@@ -58,7 +58,7 @@ const Register = () => {
       const response = await verifyOtp({ otp });
       localStorage.setItem("token", response.data.token);
       toast.success("OTP verified successfully!");
-      navigate("/dashboard");
+      navigate("/");
       setIsModalOpen(false);
     } catch (error) {
       setOtpError("Invalid OTP or expired");

@@ -17,7 +17,7 @@ const Login = () => {
             const response = await login(formData);
             localStorage.setItem('token', response.data.token);
             toast.success('Logged in successfully');
-            navigate('/dashboard');  // Redirect to dashboard
+            navigate('/');
         } catch (error) {
             toast.error(error.response.data.message || 'Login failed');
         } finally {
