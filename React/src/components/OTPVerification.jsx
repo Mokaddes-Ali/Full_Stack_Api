@@ -8,9 +8,8 @@ const VerifyOtp = () => {
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const [resendTimer, setResendTimer] = useState(() => {
-    // Retrieve the stored timer value from local storage, if available
     const savedTimer = localStorage.getItem("resendTimer");
-    return savedTimer ? parseInt(savedTimer, 10) : 180; // Default to 180 seconds
+    return savedTimer ? parseInt(savedTimer, 10) : 180; 
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -23,7 +22,10 @@ const VerifyOtp = () => {
       toast.success(response.data.message);
       navigate("/reset-password", { state: { email: state.email } });
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to verify OTP. Please try again.");
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to verify OTP. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -37,12 +39,14 @@ const VerifyOtp = () => {
     }
 
     setResendTimer(180);
-    setLoading(true); 
+    setLoading(true);
     try {
       await sendOtp({ email: state.email });
       toast.success("OTP sent successfully!");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to send OTP. Please try again.");
+      toast.error(
+        error.response?.data?.message || "Failed to send OTP. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -70,7 +74,7 @@ const VerifyOtp = () => {
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
   return (
@@ -78,7 +82,7 @@ const VerifyOtp = () => {
       <div className="card w-full max-w-sm shadow-xl bg-base-100">
         <div className="card-body">
           <h2 className="card-title text-center">Verify OTP</h2>
-          
+
           {/* OTP Input Form */}
           <form onSubmit={handleVerifyOtp}>
             <div className="form-control">
@@ -95,22 +99,21 @@ const VerifyOtp = () => {
               />
             </div>
             <div className="form-control mt-4">
-  <button
-    type="submit"
-    className={`btn btn-primary ${loading ? "loading" : ""}`}
-    disabled={loading}
-  >
-    {loading ? (
-      <>
-        <span className="loading-spinner"></span>
-        Verifying...
-      </>
-    ) : (
-      "Verify OTP"
-    )}
-  </button>
-</div>
-
+              <button
+                type="submit"
+                className={`btn btn-primary ${loading ? "loading" : ""}`}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <span className="loading-spinner"></span>
+                    Verifying...
+                  </>
+                ) : (
+                  "Verify OTP"
+                )}
+              </button>
+            </div>
           </form>
 
           {/* Message instructing user to check email for OTP */}
@@ -126,7 +129,11 @@ const VerifyOtp = () => {
               {resendTimer > 0 ? (
                 <>Resend OTP in {formatTime(resendTimer)}</>
               ) : (
-                <button onClick={handleResendOtp} className="btn btn-link" disabled={loading}>
+                <button
+                  onClick={handleResendOtp}
+                  className="btn btn-link"
+                  disabled={loading}
+                >
                   {loading ? "Sending OTP..." : "Resend OTP"}
                 </button>
               )}
@@ -134,14 +141,13 @@ const VerifyOtp = () => {
           </div>
 
           {/* Error or Success Message */}
-          {message && <p className="text-center text-sm text-error mt-2">{message}</p>}
+          {message && (
+            <p className="text-center text-sm text-error mt-2">{message}</p>
+          )}
 
           {/* Back to Login Button */}
           <div className="text-center mt-4">
-            <button
-              className="btn btn-link"
-              onClick={() => navigate("/login")}
-            >
+            <button className="btn btn-link" onClick={() => navigate("/login")}>
               Back to Login
             </button>
           </div>
@@ -152,5 +158,3 @@ const VerifyOtp = () => {
 };
 
 export default VerifyOtp;
-
-
