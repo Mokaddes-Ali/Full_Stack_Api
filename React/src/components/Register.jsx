@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { register, sendOtp, verifyOtp } from "../services/api";
 import { ToastContainer, toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // Import Link
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import "react-toastify/dist/ReactToastify.css";
 
 const Register = () => {
   const {
@@ -58,7 +57,7 @@ const Register = () => {
       const response = await verifyOtp({ otp });
       localStorage.setItem("token", response.data.token);
       toast.success("OTP verified successfully!");
-      navigate("/");
+      navigate("/login");
       setIsModalOpen(false);
     } catch (error) {
       setOtpError("Invalid OTP or expired");
@@ -75,11 +74,11 @@ const Register = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-xl">
-        <h2 className="text-2xl font-semibold text-center text-gray-800">
+      <div className="w-full max-w-md p-4 space-y-4 bg-white rounded-xl shadow-xl">
+        <h2 className="text-xl font-semibold text-center text-gray-800">
           Create Account
         </h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
           <div>
             <input
               type="text"
@@ -91,7 +90,7 @@ const Register = () => {
               })}
             />
             {errors.first_name && (
-              <p className="text-red-500 text-sm">
+              <p className="text-red-500 text-lg">
                 {errors.first_name.message}
               </p>
             )}
@@ -192,14 +191,21 @@ const Register = () => {
           </div>
           <button
             type="submit"
-            className="btn btn-primary w-full mt-4"
+            className="btn btn-primary text-md w-full mt-3"
             disabled={loading}
           >
             {loading ? "Loading..." : "Register"}
           </button>
         </form>
 
-        <ToastContainer />
+        <div className="text-center mt-2">
+          <p className="text-gray-600">
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-500 hover:underline">
+              Login here
+            </Link>
+          </p>
+        </div>
 
         {isModalOpen && (
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
