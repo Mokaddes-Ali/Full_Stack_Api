@@ -16,7 +16,7 @@ public function updateUser(Request $request)
         'last_name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email,' . $request->user()->id,
         'phone_number' => 'required|string|unique:users,phone_number,' . $request->user()->id,
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Ensure only image files are uploaded
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
     $user = $request->user();

@@ -13,7 +13,8 @@ const Profile = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const navigate = useNavigate();
+    const navigate = useNavigate()
+
 
     // Fetch user data on component mount
     useEffect(() => {
@@ -40,17 +41,38 @@ const Profile = () => {
         setPasswords({ ...passwords, [name]: value });
     };
 
-    // Update profile
+    // // Update profile
+    // const handleUpdateProfile = async (e) => {
+    //     e.preventDefault();
+    //     try {
+    //         await updateProfile(user);
+    //         MySwal.fire('Success', 'Profile updated successfully!', 'success');
+    //     } catch (error) {
+    //         console.error('Error updating profile:', error);
+    //         MySwal.fire('Error', 'Failed to update profile', 'error');
+    //     }
+    // };
+
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
+        
+        // Create a FormData object to handle file upload
+        const formData = new FormData();
+        formData.append('first_name', user.first_name);
+        formData.append('last_name', user.last_name);
+        formData.append('email', user.email);
+        formData.append('phone_number', user.phone_number);
+    
+    
         try {
-            await updateProfile(user);
+            await updateProfile(formData)
             MySwal.fire('Success', 'Profile updated successfully!', 'success');
         } catch (error) {
             console.error('Error updating profile:', error);
             MySwal.fire('Error', 'Failed to update profile', 'error');
         }
     };
+    
 
     // Update password and refresh page
     const handleUpdatePassword = async (e) => {
@@ -143,7 +165,7 @@ const Profile = () => {
         <div className="p-6 max-w-xl mx-auto bg-white rounded-xl shadow-md space-y-4">
             <h1 className="text-2xl font-bold text-center">Profile</h1>
 
-            <form onSubmit={handleUpdateProfile} className="space-y-4">
+            {/* <form onSubmit={handleUpdateProfile} className="space-y-4">
                 <div>
                     <label className="block text-gray-700">First Name</label>
                     <input 
@@ -193,7 +215,63 @@ const Profile = () => {
                 </div>
 
                 <button type="submit" className="btn btn-primary w-full">Update Profile</button>
-            </form>
+            </form> */}
+
+
+<form onSubmit={handleUpdateProfile} className="space-y-4">
+    <div>
+        <label className="block text-gray-700">First Name</label>
+        <input 
+            type="text" 
+            name="first_name" 
+            value={user.first_name} 
+            onChange={handleChange} 
+            className="w-full p-2 border border-gray-300 rounded" 
+            required 
+        />
+    </div>
+
+    <div>
+        <label className="block text-gray-700">Last Name</label>
+        <input 
+            type="text" 
+            name="last_name" 
+            value={user.last_name} 
+            onChange={handleChange} 
+            className="w-full p-2 border border-gray-300 rounded" 
+            required 
+        />
+    </div>
+
+    <div>
+        <label className="block text-gray-700">Phone Number</label>
+        <input 
+            type="text" 
+            name="phone_number" 
+            value={user.phone_number} 
+            onChange={handleChange} 
+            className="w-full p-2 border border-gray-300 rounded" 
+            required 
+        />
+    </div>
+
+    <div>
+        <label className="block text-gray-700">Email</label>
+        <input 
+            type="email" 
+            name="email" 
+            value={user.email} 
+            onChange={handleChange} 
+            className="w-full p-2 border border-gray-300 rounded" 
+            required 
+        />
+    </div>
+
+
+
+    <button type="submit" className="btn btn-primary w-full">Update Profile</button>
+</form>
+
 
                   <form onSubmit={handleUpdatePassword} className="space-y-4">
              <div>

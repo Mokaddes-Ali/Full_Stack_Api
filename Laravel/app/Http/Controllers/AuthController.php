@@ -124,15 +124,25 @@ class AuthController extends Controller
         ], 200);
     }
 
-    // Logout
     public function logout(Request $request)
     {
+        // Check if the user is authenticated
+        if (!$request->user()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No user is logged in'
+            ], 401); // Return Unauthorized status if no user is logged in
+        }
+
+        // If user is authenticated, proceed with logging out
         $request->user()->tokens()->delete();
+
         return response()->json([
             'status' => true,
             'message' => 'Logged out successfully'
         ], 200);
     }
+
 
     // Forgot Password
     public function forgotPassword(Request $request)
@@ -300,39 +310,39 @@ class AuthController extends Controller
         ], 200);
     }
 
-    // Update User Profile
-    public function updateUserProfile(Request $request)
-    {
-        $user = $request->user();
+    // // Update User Profile
+    // public function updateUserProfile(Request $request)
+    // {
+    //     $user = $request->user();
 
-        if (!$user) {
-            return response()->json([
-                'status' => false,
-                'message' => 'User not found'
-            ], 404);
-        }
+    //     if (!$user) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'User not found'
+    //         ], 404);
+    //     }
 
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'sometimes|string',
-            'last_name' => 'sometimes|string',
-            'phone_number' => 'sometimes|string|unique:users,phone_number,' . $user->id,
-        ]);
+    //     $validator = Validator::make($request->all(), [
+    //         'first_name' => 'sometimes|string',
+    //         'last_name' => 'sometimes|string',
+    //         'phone_number' => 'sometimes|string|unique:users,phone_number,' . $user->id,
+    //     ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'errors' => $validator->errors()
+    //         ], 422);
+    //     }
 
-        $user->update($request->only(['first_name', 'last_name', 'phone_number']));
+    //     $user->update($request->only(['first_name', 'last_name', 'phone_number']));
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Profile updated successfully',
-            'data' => $user
-        ], 200);
-    }
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'Profile updated successfully',
+    //         'data' => $user
+    //     ], 200);
+    // }
 
 
 
