@@ -13,6 +13,8 @@ import NotFound from './pages/NotFound';
 import { AdminRequireAuth } from './components/admin/AdminRequireAuth';
 import AdminDashboard from './components/admin/AdminDashboard';
 import AdminLogin from './components/admin/AdminLogin'
+import CustomerCRUD from './components/CustomerCRUD';
+import CustomerList from './components/CustomerList';
 
 const App = () => {
     return (
@@ -36,6 +38,9 @@ const App = () => {
                       </ProtectedRoute>
                     } />
                      <Route path="*" element={<NotFound />} />
+                     <Route path="/admin/customers" element={<CustomerList />} />
+                     
+                 
             </Routes>
         </BrowserRouter>
         <ToastContainer />

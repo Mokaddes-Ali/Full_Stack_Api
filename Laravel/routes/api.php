@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\Profile\UserController;
 use App\Http\Controllers\User\RegisterController;
@@ -31,4 +32,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/verify-password', [VerifyPasswordController::class, 'verifyPassword']);
     Route::delete('/user', [DeleteUserAccountController::class, 'deleteAccount']);
 });
+
+
+
+Route::apiResource('customers', CustomerController::class);
+// Route::get('/customers', [CustomerController::class, 'index']);
+// Route::post('/customers', [CustomerController::class, 'store']);
+// Route::put('/customers/{customer}', [CustomerController::class, 'update']);
+// Route::delete('/customers/{customer}', [CustomerController::class, 'destroy']);
 
