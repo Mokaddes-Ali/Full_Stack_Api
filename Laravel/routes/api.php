@@ -31,6 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/password', [UpdatePasswordController::class, 'updatePassword']);
     Route::post('/verify-password', [VerifyPasswordController::class, 'verifyPassword']);
     Route::delete('/user', [DeleteUserAccountController::class, 'deleteAccount']);
+Route::post('/profile/update-image', [UpdatedUserController::class, 'updateImage']);
+
 });
 
 
